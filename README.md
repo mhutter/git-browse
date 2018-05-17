@@ -1,4 +1,5 @@
 # git-browse
+[![Build Status](https://travis-ci.com/mhutter/git-browse.svg?branch=master)](https://travis-ci.com/mhutter/git-browse)
 
 Open the current repository in a browser.
 
