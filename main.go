@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strings"
 )
 
 func main() {
@@ -13,11 +14,13 @@ func main() {
 		return
 	}
 
-	re := regexp.MustCompile("^git@([^:]+):(.+)\\.git")
-	m := re.FindStringSubmatch(string(out))
-
-	uri := fmt.Sprintf("https://%s/%s", m[1], m[2])
 	cmd, err := openCmd()
+	if err != nil {
+		fmt.Println("ERROR:", err)
+		os.Exit(1)
+	}
+
+	uri, err := extractURL(strings.TrimSpace(string(out)))
 	if err != nil {
 		fmt.Println("ERROR:", err)
 		os.Exit(1)
@@ -40,4 +43,20 @@ func openCmd() (string, error) {
 
 func cmdExists(exe string) bool {
 	return exec.Command("which", exe).Run() == nil
+}
+
+func extractURL(remote string) (string, error) {
+	patterns := []string{
+		"^git@([^:]+):((?U).+)(?:\\.git)?$",
+		"^https://([^/]+)/((?U).+)(?:\\.git)?$",
+	}
+	for _, p := range patterns {
+		re := regexp.MustCompile(p)
+		m := re.FindStringSubmatch(remote)
+		if len(m) == 3 {
+			return fmt.Sprintf("https://%s/%s", m[1], m[2]), nil
+		}
+	}
+
+	return "", fmt.Errorf("Could not parse remote '%s'", remote)
 }
