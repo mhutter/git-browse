@@ -1,16 +1,19 @@
-# `lab`
+# git-browse
 
-Helper around Git repositories, inspired by `hub`.
+Open the current repository in a browser.
 
 ## Usage
 
-```
-usage: lab <command>
+    # cd into any git repository
+    git browse
+    # opens a browser
 
-Commands:
-    browse    open repository in browser
-```
+## Limitations
+
+At the moment:
+- `git-browse` uses the URL of the `origin` remote
+- only SSH remotes are supported
 
 ## Installation
 
-    go get -u github.com/mhutter/lab
+    go get -u github.com/mhutter/git-browse

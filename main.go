@@ -2,35 +2,42 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
+	"os/exec"
+	"regexp"
 )
 
 func main() {
-	var fn func([]string) error
-
-	cmd := "usage"
-	if len(os.Args) > 1 {
-		cmd = os.Args[1]
+	out, err := exec.Command("git", "remote", "get-url", "origin").Output()
+	if err != nil {
+		return
 	}
 
-	switch cmd {
-	case "browse":
-		fn = browse
-	default:
-		fn = usage
+	re := regexp.MustCompile("^git@([^:]+):(.+)\\.git")
+	m := re.FindStringSubmatch(string(out))
+
+	uri := fmt.Sprintf("https://%s/%s", m[1], m[2])
+	cmd, err := openCmd()
+	if err != nil {
+		fmt.Println("ERROR:", err)
+		os.Exit(1)
 	}
 
-	if err := fn(os.Args); err != nil {
-		log.Printf("ERROR: %s", err)
-	}
+	exec.Command(cmd, uri).Start()
 }
 
-func usage(args []string) error {
-	fmt.Printf("usage: %s <command>\n", args[0])
-	fmt.Println("")
-	fmt.Println("Commands:")
-	fmt.Println("    browse    open repository in browser")
-	os.Exit(1)
-	return nil
+func openCmd() (string, error) {
+	candidates := []string{"open", "xdg-open"}
+	for _, cmd := range candidates {
+		if cmdExists(cmd) {
+			return cmd, nil
+		}
+	}
+
+	return "", fmt.Errorf("I don't know how to open a browser! tried: %s",
+		candidates)
+}
+
+func cmdExists(exe string) bool {
+	return exec.Command("which", exe).Run() == nil
 }
