@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
-	"regexp"
 )
 
 func main() {
@@ -26,19 +24,6 @@ func main() {
 	if err := fn(os.Args); err != nil {
 		log.Printf("ERROR: %s", err)
 	}
-}
-
-func browse(args []string) error {
-	out, err := exec.Command("git", "remote", "get-url", "origin").Output()
-	if err != nil {
-		return err
-	}
-
-	re := regexp.MustCompile("^git@([^:]+):(.+)\\.git")
-	m := re.FindStringSubmatch(string(out))
-
-	uri := fmt.Sprintf("https://%s/%s", m[1], m[2])
-	return exec.Command("open", uri).Run()
 }
 
 func usage(args []string) error {
