@@ -12,8 +12,31 @@ Open the current repository in a browser.
 ## Limitations
 
 At the moment:
-- `git-browse` uses the URL of the `origin` remote
+
+* `git-browse` uses the URL of the `origin` remote
+
 
 ## Installation
 
+**Homebrew tap** (macOS)
+
+    brew install mhutter/tap/git-browse
+
+
+**go get** (any OS)
+
     go get -u github.com/mhutter/git-browse
+
+
+Or [download a pre-built binary](https://github.com/mhutter/git-browse/releases).
+
+
+
+## License
+
+MIT (see LICENSE)
+
+---
+> [Manuel Hutter](https://hutter.io) -
+> GitHub [@mhutter](https://github.com) -
+> Twitter [@dratir](https://twiter.com/dratir)
